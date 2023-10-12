@@ -121,11 +121,13 @@ void serverlet(int client, SSL* ssl)/* Serve the connection -- threadable */
 		int bytes = 0;
 
 		/* recv request */
+		bzero(buf, sizeof(buf));
 		bytes = SSL_read(ssl, buf, sizeof(buf));
 		if (bytes < 0) {
 			perror("SSL_read failed");
 			ERR_print_errors_fp(stderr);
 		}
+	        printf("recv(%s)\n", buf);
 
 		/*send response */
 		bytes = SSL_write(ssl, buf, bytes);
