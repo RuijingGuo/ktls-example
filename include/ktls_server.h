@@ -37,6 +37,7 @@
 
 /* TLS socket options */
 #define TLS_TX			1	/* Set transmit parameters */
+#define TLS_RX			2	/* Set transmit parameters */
 #define TCP_ULP			31
 
 /* Supported versions */

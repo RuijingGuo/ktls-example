@@ -93,6 +93,26 @@ int setup_ktls(int client, SSL *ssl)
 		perror("Unable set TLS_TX");
 		goto end;
 	}
+	bzero(&crypto_info, sizeof(crypto_info));
+
+	EVP_CIPHER_CTX * read_ctx = ssl->enc_read_ctx;
+	EVP_AES_GCM_CTX* gcm_read = (EVP_AES_GCM_CTX*)(read_ctx->cipher_data);
+
+	unsigned char* key_read = (unsigned char*)(gcm_read->gcm.key);
+	unsigned char* iv_read = gcm_read->iv;
+	unsigned char* seq_number_read = ssl->s3->read_sequence;
+
+	crypto_info.info.version = TLS_1_2_VERSION;
+	crypto_info.info.cipher_type = TLS_CIPHER_AES_GCM_128;
+
+	memcpy(crypto_info.iv, iv_read + 4, TLS_CIPHER_AES_GCM_128_IV_SIZE);
+	memcpy(crypto_info.rec_seq, seq_number_read, TLS_CIPHER_AES_GCM_128_REC_SEQ_SIZE);
+	memcpy(crypto_info.key, key_read, TLS_CIPHER_AES_GCM_128_KEY_SIZE);
+	memcpy(crypto_info.salt, iv_read, TLS_CIPHER_AES_GCM_128_SALT_SIZE);
+	if (setsockopt(client, SOL_TLS, TLS_RX, &crypto_info, sizeof(crypto_info)) < 0) {
+		perror("Unable set TLS_RX");
+		goto end;
+	}
 	rc = 0;
 end:
 	return rc;

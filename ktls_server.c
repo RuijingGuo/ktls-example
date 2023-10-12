@@ -18,12 +18,15 @@ static void serverlet(int client, SSL* ssl)/* Serve the connection -- threadable
 	}
 
 	/* recv request */
-	bytes = SSL_read(ssl, buf, sizeof(buf));
+	//bytes = SSL_read(ssl, buf, sizeof(buf));
+        bzero(buf, sizeof(buf));
+	bytes = read(client, buf, sizeof(buf));
 	if (bytes < 0) {
 		perror("SSL_read failed");
 		ERR_print_errors_fp(stderr);
 		goto end;
 	}
+        printf("recv(%s)\n", buf);
 
 	/*send response */
 	bytes = send(client, buf, sizeof(buf), 0);
