@@ -19,6 +19,8 @@ static void serverlet(int client, SSL* ssl)/* Serve the connection -- threadable
 
 	/* recv request */
 	//bytes = SSL_read(ssl, buf, sizeof(buf));
+
+while (1) {
         bzero(buf, sizeof(buf));
 	bytes = read(client, buf, sizeof(buf));
 	if (bytes < 0) {
@@ -35,6 +37,8 @@ static void serverlet(int client, SSL* ssl)/* Serve the connection -- threadable
 		ERR_print_errors_fp(stderr);
 		goto end;
 	}
+}
+
 end:
 	return;
 }

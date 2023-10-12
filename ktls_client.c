@@ -108,21 +108,25 @@ int main_tls_client()
 
 	// Start tests
 	char buf[BUFSIZ] = "Hello openssl client";
+	char buf1[BUFSIZ+1];
 	int res = 0;
+
+   while(1) {
 
 	printf("send(%s)\n", buf);
 	res = send(server, buf, sizeof(buf), 0);
 	if (res < 0) {
 		printf("SSL Read error: %i\n", res);
 	}
+        sleep(3);
 
-	bzero(buf, sizeof(buf));
-	res = read(server, buf, sizeof(buf));
+	bzero(buf1, sizeof(buf));
+	res = read(server, buf1, sizeof(buf1));
 	if (res < 0) {
 		printf("SSL Read error: %i\n", res);
 	}
-	printf("recv(%s)\n", buf);
-
+	printf("recv(%s)\n", buf1);
+   }
 	SSL_free(ssl);
 	close(server);
 	SSL_CTX_free(ctx);
